@@ -1,0 +1,24 @@
+{
+  "appId": "app.melodix.android",
+  "appName": "Melodix",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "backgroundColor": "#0a0a0a",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0a0a0a"
+    }
+  },
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#0a0a0a"
+  }
+}

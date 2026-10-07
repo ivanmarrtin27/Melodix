@@ -1,0 +1,27 @@
+{
+  "name": "melodix-v1",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --prefix apps/web",
+    "dev:web": "npm run dev --prefix apps/web",
+    "dev:web:lan": "npm run dev --prefix apps/web -- --host 0.0.0.0",
+    "dev:server": "python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000 --app-dir server",
+    "dev:server:lan": "python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000 --app-dir server",
+    "dev:server:install": "pip install -r server/requirements.txt",
+    "dev:all": "concurrently -k -n api,web -c blue,green \"npm run dev:server\" \"npm run dev:web\"",
+    "dev:all:mobile": "concurrently -k -n api,web -c blue,green \"npm run dev:server:lan\" \"npm run dev:web:lan\"",
+    "build": "npm run build --prefix apps/web",
+    "build:android": "node scripts/check-android-env.mjs && npm run build:android --prefix apps/web",
+    "cap:open": "npm run cap:open --prefix apps/web",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.0"
+  }
+}

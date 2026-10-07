@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+!.env.android.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Cache local de charts (Top 50 semanal)
+server/data/
+server/__pycache__/
+**/__pycache__/
+*.pyc
+
+# Play Store / firmas
+**/google-play-service-account.json
+**/*.jks
+**/*.keystore
+Melodix/android/
+Melodix/.expo/
+
+# Capacitor / Android local
+apps/web/android/local.properties
+apps/web/android/.gradle/
+apps/web/android/app/build/
+apps/web/android/build/
+apps/web/android/.idea/
+apps/web/android/app/.cxx/
+apps/web/android/captures/
+*.apk
+*.aab
+

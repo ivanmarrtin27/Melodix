@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Melodix app icon 512">
+  <rect width="512" height="512" rx="90" fill="#000000"/>
+  <path
+    d="M132 116C95 118 66 145 66 182C66 223 97 252 135 263C180 277 215 264 238 236C267 201 286 154 323 133C359 112 405 118 443 146C476 171 490 216 482 255C473 301 435 344 390 360C343 377 286 369 246 337C223 319 204 289 202 258C201 249 205 242 214 238C226 232 238 239 245 249C267 283 305 302 344 301C378 301 411 286 434 258C456 230 460 196 443 167C424 134 389 110 349 106C288 100 247 142 222 188C197 234 156 261 114 258C92 256 74 248 60 231C49 218 46 200 52 184C60 159 85 140 112 130C115 128 120 123 132 116Z"
+    fill="none"
+    stroke="#E5494C"
+    stroke-width="30"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M183 183C217 150 268 140 312 150C343 158 373 177 392 208C417 249 411 301 376 336C339 373 283 386 238 364C209 349 184 320 177 287C171 257 177 223 195 197C201 188 192 177 183 183Z"
+    fill="none"
+    stroke="#E5494C"
+    stroke-width="30"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M287 151L344 204L392 151"
+    fill="none"
+    stroke="#E5494C"
+    stroke-width="30"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
