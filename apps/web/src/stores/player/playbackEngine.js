@@ -80,6 +80,15 @@ export function setExpectedMediaId(id) {
   expectedMediaId = id ? String(id) : null
 }
 
+export function getExpectedMediaId() {
+  return expectedMediaId
+}
+
+/** Hay sesión de motor con media cargada (false tras restore / stop / invalidate). */
+export function hasActivePlaybackSession() {
+  return expectedMediaId != null && activePlayRequestId === playRequestId
+}
+
 export function resetProgressThrottle() {
   lastProgressEmit = 0
 }

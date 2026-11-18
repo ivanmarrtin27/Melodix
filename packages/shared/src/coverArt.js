@@ -53,18 +53,17 @@ export function getTrackCoverUrl(track, size = COVER_SIZE) {
   if (candidate && !isYoutubeVideoThumb(candidate)) {
     return upscaleCoverUrl(candidate, size)
   }
-  if (track?.videoId && isYoutubeVideoThumb(candidate)) {
+  const ytId = track?.mediaId || track?.videoId
+  if (ytId && isYoutubeVideoThumb(candidate)) {
     return null
   }
   return candidate ? upscaleCoverUrl(candidate, size) : null
 }
 
 export function getTrackCoverFallback(track) {
-  if (track?.videoId) {
-    return `https://i.ytimg.com/vi/${track.videoId}/mqdefault.jpg`
-  }
-  if (track?.mediaId) {
-    return `https://i.ytimg.com/vi/${track.mediaId}/mqdefault.jpg`
+  const ytId = track?.mediaId || track?.videoId
+  if (ytId) {
+    return `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`
   }
   return null
 }

@@ -18,6 +18,7 @@ import {
   upscaleCoverUrl,
 } from '@melodix/shared/coverArt'
 import { apiUrl } from '../config/apiBase'
+import { withTimeoutSignal } from './apiRetry'
 
 const deezerCoverCache = new Map()
 
@@ -28,10 +29,11 @@ export async function fetchDeezerTrackCover(artist, title) {
   const key = query.toLowerCase()
   if (deezerCoverCache.has(key)) return deezerCoverCache.get(key)
 
+  const { signal, clear } = withTimeoutSignal(6000)
   try {
     const res = await fetch(
       apiUrl(`/api/catalog/search/track?q=${encodeURIComponent(query)}&limit=1`),
-      { signal: AbortSignal.timeout(6000) }
+      { signal }
     )
     if (!res.ok) return null
     const data = await res.json()
@@ -43,6 +45,8 @@ export async function fetchDeezerTrackCover(artist, title) {
   } catch {
     deezerCoverCache.set(key, null)
     return null
+  } finally {
+    clear()
   }
 }
 

@@ -21,8 +21,9 @@ export async function prefetchNextMetadata(get, set, count = 5) {
           const newOriginal = [...state.originalQueue]
           const patch = { ...newQueue[idx], mediaId, videoId: mediaId }
           newQueue[idx] = patch
-          if (newOriginal[idx]?.id === next.id) {
-            newOriginal[idx] = { ...newOriginal[idx], mediaId, videoId: mediaId }
+          const origIdx = newOriginal.findIndex((t) => t.id === next.id)
+          if (origIdx >= 0) {
+            newOriginal[origIdx] = { ...newOriginal[origIdx], mediaId, videoId: mediaId }
           }
           return { queue: newQueue, originalQueue: newOriginal }
         })
@@ -40,8 +41,9 @@ export async function prefetchNextMetadata(get, set, count = 5) {
           const newOriginal = [...state.originalQueue]
           const patch = { ...newQueue[idx], mediaId, videoId: mediaId }
           newQueue[idx] = patch
-          if (newOriginal[idx]?.id === next.id) {
-            newOriginal[idx] = { ...newOriginal[idx], mediaId, videoId: mediaId }
+          const origIdx = newOriginal.findIndex((t) => t.id === next.id)
+          if (origIdx >= 0) {
+            newOriginal[origIdx] = { ...newOriginal[origIdx], mediaId, videoId: mediaId }
           }
           return { queue: newQueue, originalQueue: newOriginal }
         })

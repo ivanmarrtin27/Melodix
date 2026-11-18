@@ -39,7 +39,8 @@ export function isTransientApiError(err) {
   )
 }
 
-function withTimeoutSignal(ms) {
+/** AbortController + setTimeout (compatible con WebViews sin AbortSignal.timeout). */
+export function withTimeoutSignal(ms) {
   const controller = new AbortController()
   const id = window.setTimeout(() => controller.abort(), ms)
   return {

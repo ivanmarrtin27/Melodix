@@ -48,7 +48,8 @@ export async function enrichLooseTrackToDeezer(row, { official = false } = {}) {
         tracks: official ? 5 : 1,
       })
       if (official) {
-        const ranked = filterOfficialSearchTracks(tracks, `${title} ${artist}`, 1)
+        // Score contra título (no query compuesto title+artist)
+        const ranked = filterOfficialSearchTracks(tracks, title, 1)
         return ranked[0] || tracks[0] || (row.id ? row : null)
       }
       return tracks[0] || (row.id ? row : null)

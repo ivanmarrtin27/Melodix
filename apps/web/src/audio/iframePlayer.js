@@ -136,10 +136,11 @@ function ensureHost() {
 }
 
 function loadIframeHost() {
-  // Si el host está listo pero es una versión antigua, forzar recarga
+  // Host listo con la versión actual → no recargar
   if (playerReady && host) {
     const src = host.getAttribute('src') || ''
-    if (src.includes('v=8')) return Promise.resolve()
+    if (src.includes('v=9')) return Promise.resolve()
+    // Versión antigua → forzar recarga
     playerReady = false
     hostLoaded = false
     initPromise = null
@@ -191,16 +192,20 @@ function loadIframeHost() {
 
     const nextSrc = `${HOST_SRC}?v=9`
     const currentSrc = iframe.getAttribute('src') || ''
-    if (!currentSrc || !currentSrc.includes('v=8')) {
+    if (!currentSrc.includes('v=9')) {
       // Recarga forzada al cambiar de versión del host (fix de autoplay)
       playerReady = false
       hostLoaded = false
       iframe.src = nextSrc
-    } else if (!playerReady) {
-      playerReady = false
-      iframe.src = nextSrc
-    } else {
+    } else if (playerReady) {
+      clearTimeout(timer)
       done()
+    } else if (hostLoaded || iframe.contentWindow) {
+      clearTimeout(timer)
+      setTimeout(() => {
+        postToHost('ping')
+        done()
+      }, 100)
     }
   })
 

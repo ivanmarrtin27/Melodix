@@ -12,11 +12,20 @@ export function lsGet(key, fallback = null) {
 }
 
 export function lsSet(key, value) {
-  localStorage.setItem(`${LS_PREFIX}${key}`, JSON.stringify(value))
+  try {
+    localStorage.setItem(`${LS_PREFIX}${key}`, JSON.stringify(value))
+    return true
+  } catch {
+    return false
+  }
 }
 
 export function lsRemove(key) {
-  localStorage.removeItem(`${LS_PREFIX}${key}`)
+  try {
+    localStorage.removeItem(`${LS_PREFIX}${key}`)
+  } catch {
+    /* ignore */
+  }
 }
 
 export function lsClear() {

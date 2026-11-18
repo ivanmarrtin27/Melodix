@@ -41,6 +41,7 @@ import {
   engineStop,
   engineVolume,
   getPlayRequestId,
+  hasActivePlaybackSession,
   invalidatePlaybackSession,
   isEqualizerEnabled,
   preferStreamPlayback,
@@ -99,6 +100,8 @@ export const usePlayerStore = create((set, get) => ({
   endScrubbing: () => set({ isScrubbing: false }),
 
   playTrack: async (track, queue = null) => {
+    if (!track?.id) return
+
     const requestId = bumpPlayRequestId()
     const isStale = () => requestId !== getPlayRequestId()
     const safeSet = (patch) => {
@@ -285,8 +288,11 @@ export const usePlayerStore = create((set, get) => ({
   playQueue: (tracks, startIndex = 0) => {
     if (!tracks.length) return
     const hydrated = tracks.map(hydrateTrackMediaId)
-    prefetchPlaybackBatch(hydrated.slice(startIndex), 6)
-    void get().playTrack(hydrated[startIndex], hydrated)
+    const idx = Number.isFinite(startIndex)
+      ? Math.min(Math.max(0, startIndex), hydrated.length - 1)
+      : 0
+    prefetchPlaybackBatch(hydrated.slice(idx), 6)
+    void get().playTrack(hydrated[idx], hydrated)
   },
 
   addTrackToQueue: (track) => {
@@ -302,7 +308,7 @@ export const usePlayerStore = create((set, get) => ({
   },
 
   togglePlay: () => {
-    const { isLoading, isPlaying, currentTrack } = get()
+    const { isLoading, isPlaying, currentTrack, queue, progress, playerState } = get()
 
     if (isLoading && !isPlaying) {
       engineStop()
@@ -320,6 +326,24 @@ export const usePlayerStore = create((set, get) => ({
     }
 
     if (currentTrack) {
+      // Tras restore / idle / error no hay media en el motor → hay que volver a cargar
+      const needsReload =
+        !hasActivePlaybackSession() ||
+        playerState === 'idle' ||
+        playerState === 'error'
+      if (needsReload) {
+        const resumeAt = progress > 1 ? progress : 0
+        const trackId = currentTrack.id
+        const q = queue?.length ? queue : null
+        void get()
+          .playTrack(currentTrack, q)
+          .then(() => {
+            if (resumeAt > 0 && get().currentTrack?.id === trackId) {
+              get().seek(resumeAt)
+            }
+          })
+        return
+      }
       engineResume()
       resumeStatsTracking()
       set({ isPlaying: true })

@@ -141,7 +141,7 @@ export function scoreAlbumForQuery(album, query) {
   else if (title.includes(q)) score += 35
   if (artist === q) score += 40
   else if (artist.includes(q)) score += 20
-  return score
+  return score > 0 ? score : -1
 }
 
 export function rankAlbumsByQuery(albums, query) {
@@ -152,6 +152,7 @@ export function rankAlbumsByQuery(albums, query) {
       index,
       score: scoreAlbumForQuery(album, query),
     }))
+    .filter((row) => row.score >= 0)
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .map((row) => row.album)
 }

@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { navigateWithReturn } from '../../utils/navigationReturn'
 import { useLibraryStore } from '../../stores/libraryStore'
 import { useT } from '../../i18n'
-import { filterOfficialSearchTracks, scoreArtistForQuery } from '../../utils/searchRank'
+import { scoreArtistForQuery } from '../../utils/searchRank'
 import { normalizeMatchText } from '../../utils/trackMatch'
 import { AlbumCover } from '../ui/AlbumCover'
 import { RippleCard } from '../ui/RippleCard'
@@ -101,7 +101,8 @@ export function SearchResults({
     }
 
     return {
-      songTracks: filterOfficialSearchTracks(pool, query, SEARCH_SONGS_LIMIT),
+      // Ya filtradas en catalog/search; aquí solo prioriza featured y corta
+      songTracks: pool.slice(0, SEARCH_SONGS_LIMIT),
       otherArtists: featured
         ? artists.filter(
             (a) =>
@@ -115,8 +116,10 @@ export function SearchResults({
   if (empty) return null
 
   const openArtist = (artist) => {
+    const id = artist?.deezerId || artist?.id
+    if (!id) return
     onOpenArtist?.(artist)
-    go(`/artist/${artist.deezerId}`)
+    go(`/artist/${id}`)
   }
 
   const following = featured

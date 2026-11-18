@@ -5,6 +5,7 @@
 import cacheService from './cacheService'
 import { isProviderMediaId, pickProviderMediaId } from '../utils/mediaId'
 import { getApiBase } from '../config/apiBase'
+import { withTimeoutSignal } from '../utils/apiRetry'
 
 const resolveInflight = new Map()
 /** @type {Map<string, string>} */
@@ -60,27 +61,30 @@ async function resolveViaBackend(title, artist, meta = {}, limit = 1) {
   params.set('limit', String(Math.max(1, Math.min(limit, 8))))
   params.set('prefer_explicit', meta.preferExplicit === false ? 'false' : 'true')
 
-  const res = await fetch(apiPath(`/api/media/resolve?${params}`), {
-    signal: AbortSignal.timeout(limit > 1 ? 16000 : 12000),
-  })
-  if (!res.ok) return limit > 1 ? [] : null
-  const data = await res.json()
+  const { signal, clear } = withTimeoutSignal(limit > 1 ? 16000 : 12000)
+  try {
+    const res = await fetch(apiPath(`/api/media/resolve?${params}`), { signal })
+    if (!res.ok) return limit > 1 ? [] : null
+    const data = await res.json()
 
-  if (limit === 1) {
-    const id = data.mediaId || data.videoId || null
-    return id && isProviderMediaId(String(id)) ? String(id) : null
-  }
-
-  const ids = []
-  if (Array.isArray(data.candidates)) {
-    for (const c of data.candidates) {
-      const id = typeof c === 'string' ? c : c?.mediaId || c?.videoId
-      if (id && isProviderMediaId(String(id))) ids.push(String(id))
+    if (limit === 1) {
+      const id = data.mediaId || data.videoId || null
+      return id && isProviderMediaId(String(id)) ? String(id) : null
     }
+
+    const ids = []
+    if (Array.isArray(data.candidates)) {
+      for (const c of data.candidates) {
+        const id = typeof c === 'string' ? c : c?.mediaId || c?.videoId
+        if (id && isProviderMediaId(String(id))) ids.push(String(id))
+      }
+    }
+    const primary = data.mediaId || data.videoId
+    if (primary && isProviderMediaId(String(primary))) ids.unshift(String(primary))
+    return [...new Set(ids)]
+  } finally {
+    clear()
   }
-  const primary = data.mediaId || data.videoId
-  if (primary && isProviderMediaId(String(primary))) ids.unshift(String(primary))
-  return [...new Set(ids)]
 }
 
 async function resolveMediaId(title, artist, meta = {}) {
@@ -88,7 +92,8 @@ async function resolveMediaId(title, artist, meta = {}) {
   const duration = meta.duration > 0 ? Math.round(meta.duration) : 0
   const key = `resolve:v11:${title}:${artist}:${album}:${duration}`.toLowerCase()
   const cached = cacheService.getAny(key)
-  if (cached) return cached
+  if (cached && isProviderMediaId(String(cached))) return String(cached)
+  if (cached) cacheService.invalidate(key)
 
   try {
     const mediaId = await resolveViaBackend(title, artist, {

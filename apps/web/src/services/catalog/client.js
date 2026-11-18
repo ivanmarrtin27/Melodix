@@ -1,4 +1,4 @@
-import { fetchWithRetry } from '../../utils/apiRetry'
+import { fetchWithRetry, withTimeoutSignal } from '../../utils/apiRetry'
 import cacheService from '../cacheService'
 import { getApiBase } from '../../config/apiBase'
 
@@ -40,10 +40,11 @@ function releaseSlot() {
 
 export async function deezerFetch(path) {
   await acquireSlot()
+  const { signal, clear } = withTimeoutSignal(15000)
   try {
     const res = await fetchWithRetry(
       `${getDeezerApiBase()}${path}`,
-      { signal: AbortSignal.timeout(15000) },
+      { signal },
       { retries: 5, baseDelayMs: 600 }
     )
     if (res.status === 429) {
@@ -66,6 +67,7 @@ export async function deezerFetch(path) {
     if (cached) return cached
     throw err
   } finally {
+    clear()
     releaseSlot()
   }
 }

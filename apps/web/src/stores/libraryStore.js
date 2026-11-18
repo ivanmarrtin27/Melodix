@@ -55,12 +55,20 @@ const libraryStorage = createJSONStorage(() => ({
     return null
   },
   setItem: (name, value) => {
-    localStorage.setItem(name, value)
+    try {
+      localStorage.setItem(name, value)
+    } catch {
+      /* quota / private mode — no tumbar el store */
+    }
   },
   removeItem: (name) => {
-    localStorage.removeItem(name)
-    if (name === STORAGE_KEYS.LIBRARY) {
-      localStorage.removeItem(STORAGE_KEYS.PLAYLISTS)
+    try {
+      localStorage.removeItem(name)
+      if (name === STORAGE_KEYS.LIBRARY) {
+        localStorage.removeItem(STORAGE_KEYS.PLAYLISTS)
+      }
+    } catch {
+      /* ignore */
     }
   },
 }))

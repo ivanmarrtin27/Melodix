@@ -26,7 +26,7 @@ export function buildActiveQueue(baseQueue, track, shuffle) {
   }
 
   const current = list[safeIdx]
-  const rest = list.filter((t) => t.id !== current.id)
+  const rest = [...list.slice(0, safeIdx), ...list.slice(safeIdx + 1)]
   return { queue: [current, ...shuffleArray(rest)], index: 0 }
 }
 
@@ -48,9 +48,7 @@ export function applyQueueContext(track, queue, get, set) {
     return mergeTrackFromQueue(track, get)
   }
 
-  if (get().queue.length <= 1) {
-    set({ queue: [track], originalQueue: [track], queueIndex: 0 })
-  }
+  set({ queue: [track], originalQueue: [track], queueIndex: 0 })
   return track
 }
 

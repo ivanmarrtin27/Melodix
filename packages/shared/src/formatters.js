@@ -27,6 +27,7 @@ export function formatDuration(seconds) {
 }
 
 export function formatMinutes(totalSeconds) {
+  if (!totalSeconds || !isFinite(totalSeconds)) return '0 min'
   const mins = Math.floor(totalSeconds / 60)
   if (mins < 60) return `${mins} min`
   const hours = Math.floor(mins / 60)

@@ -48,6 +48,13 @@ export default function Search() {
     else setSearchParams({}, { replace: true })
   }, [setSearchParams])
 
+  // Sync back/forward o navegación in-app a /search?q=...
+  const urlQ = searchParams.get('q') || ''
+  useEffect(() => {
+    setQuery(urlQ)
+    setSubmittedQuery(urlQ.trim())
+  }, [urlQ])
+
   useEffect(() => {
     if (!submittedQuery) {
       setResults(EMPTY_RESULTS)
