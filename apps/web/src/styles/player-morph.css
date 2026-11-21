@@ -1,0 +1,315 @@
+/* ── Transición mini ↔ full: sheet deslizante (misma curva al abrir y cerrar) ── */
+.player-morph-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  will-change: transform, border-radius, opacity;
+  backface-visibility: hidden;
+  border-radius: 0;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.player-morph-shell--opening {
+  background: linear-gradient(
+    165deg,
+    rgba(46, 46, 50, 0.98) 0%,
+    rgba(22, 22, 26, 0.99) 100%
+  );
+  box-shadow:
+    0 -12px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.player-morph-shell__backdrop {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.player-morph-shell--opening .player-morph-shell__backdrop {
+  animation: morph-backdrop-rise 0.5s cubic-bezier(0.32, 0.72, 0, 1) 0.06s forwards;
+}
+
+.player-morph-shell--open .player-morph-shell__backdrop {
+  opacity: 1;
+}
+
+@keyframes morph-backdrop-rise {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.player-morph-shell__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  opacity: 0;
+  touch-action: pan-y;
+}
+
+.player-morph-shell--opening .player-morph-shell__content {
+  animation: morph-content-fade 0.45s cubic-bezier(0.32, 0.72, 0, 1) 0.12s both;
+}
+
+@keyframes morph-content-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.player-morph-shell--open .player-morph-shell__content {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+.player-morph-shell--closing .player-morph-shell__backdrop {
+  opacity: 0;
+  transition: opacity 0.72s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: none;
+}
+
+.player-morph-shell--closing .player-morph-shell__content {
+  animation: none;
+  transition: opacity 0.55s ease-out;
+}
+
+.player-morph-shell--dragging {
+  cursor: grabbing;
+}
+
+.player-sheet-handle-bar {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0.55rem 0 0.35rem;
+  padding-top: max(0.55rem, env(safe-area-inset-top, 0px));
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  outline: none;
+}
+
+.player-sheet-handle-bar--dragging,
+.player-sheet-handle-bar:active {
+  cursor: grabbing;
+}
+
+.player-morph-shell__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.player-sheet-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.5rem;
+  height: 1.35rem;
+  pointer-events: none;
+}
+
+.player-sheet-handle__pill {
+  display: block;
+  width: 2.65rem;
+  height: 0.28rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.34);
+  transition:
+    background 0.18s ease,
+    transform 0.18s cubic-bezier(0.34, 1.2, 0.64, 1),
+    width 0.18s ease;
+}
+
+.player-sheet-handle-bar:hover .player-sheet-handle__pill {
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.player-sheet-handle--dragging .player-sheet-handle__pill,
+.player-sheet-handle-bar:active .player-sheet-handle__pill {
+  width: 3.15rem;
+  background: rgba(255, 255, 255, 0.72);
+  transform: scaleY(1.15);
+}
+
+/* Mini fijo debajo del sheet: sin fade ni morph al minimizar */
+.app-dock--under-player,
+.mini-player-dock--under-player {
+  pointer-events: none;
+}
+
+.app-dock--under-player .mini-player-card,
+.mini-player-dock--under-player .mini-player-card {
+  opacity: 1;
+  transform: none;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Tras minimizar: el mini no debe “entrar” con rise (salvo 1ª pista con --reveal) */
+.app-dock:not(.app-dock--reveal):not(.app-dock--under-player) .mini-player-card {
+  animation: none;
+}
+
+@keyframes bottom-nav-exit {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, calc(108% + 0.65rem), 0) scale(0.97);
+  }
+}
+
+.bottom-nav-float--exit .bottom-nav-pill {
+  transform-origin: center bottom;
+  animation: bottom-nav-exit 0.36s cubic-bezier(0.4, 0, 0.2, 1) 0.06s forwards;
+}
+
+.bottom-nav-float--exit {
+  pointer-events: none;
+}
+
+@keyframes mini-player-exit {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, calc(118% + 0.75rem), 0) scale(0.97);
+  }
+}
+
+.mini-player-dock--exit .mini-player-card {
+  transform-origin: center bottom;
+  animation: mini-player-exit 0.36s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.app-dock--opening {
+  pointer-events: none;
+}
+
+.app-dock--opening .mini-player-dock {
+  z-index: 90;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-morph-shell__backdrop,
+  .player-morph-shell__content {
+    animation: none !important;
+    transition: opacity 0.15s ease;
+  }
+
+  .bottom-nav-float--exit {
+    animation: fade-in 0.15s ease reverse forwards;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-in-out;
+}
+
+@keyframes tabEnterFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-page {
+  min-height: 100%;
+}
+
+.tab-page-enter-fade {
+  animation: tabEnterFade 0.2s ease both;
+}
+
+.tab-page-enter-slide {
+  animation: tabEnterSlide 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tabEnterSlide {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-page-enter-fade {
+    animation: fade-in 0.12s ease both;
+  }
+
+  .tab-page-enter-slide {
+    animation: fade-in 0.12s ease both;
+  }
+
+  .bottom-nav-indicator {
+    transition: none !important;
+  }
+}
+
+@keyframes np-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.85);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.82);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.35);
+  }
+}
+
+@keyframes np-bar-bounce {
+  0%,
+  100% {
+    height: 4px;
+    opacity: 0.4;
+  }
+  50% {
+    height: 13px;
+    opacity: 1;
+  }
+}
+
+@keyframes np-eq-wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}

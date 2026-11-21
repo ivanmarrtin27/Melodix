@@ -1,0 +1,21 @@
+{
+  "name": "@melodix/shared",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./accentColors": "./src/accentColors.js",
+    "./playbackMode": "./src/playbackMode.js",
+    "./mediaId": "./src/mediaId.js",
+    "./shuffle": "./src/shuffle.js",
+    "./formatters": "./src/formatters.js",
+    "./trackMatch": "./src/trackMatch.js",
+    "./searchRank": "./src/searchRank.js",
+    "./genres": "./src/genres.js",
+    "./coverArt": "./src/coverArt.js",
+    "./apiBase": "./src/apiBase.js"
+  },
+  "files": ["src"]
+}
